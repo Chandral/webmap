@@ -34,6 +34,14 @@ for lt, ln, el in zip(lat, lon, elev):
                                                           fill_opacity=10))
 
 
+feature_group_population = folium.FeatureGroup(name="Population")
+
+feature_group_population.add_child(folium.GeoJson(data=open('data/world.json', 'r', encoding='utf-8-sig').read(),
+                                                  style_function=lambda x: {'fillColor':'green' if x['properties']
+                                                    ['POP2005'] < 10000000 else 'orange' if 10000000 <= x['properties']
+                                                  ['POP2005'] < 20000000 else 'red'}))
+
 my_map.add_child(feature_group_volcanoes)  # Attaches feature group for volcanoes to the folium map object
+my_map.add_child(feature_group_population)
 my_map.add_child(folium.LayerControl())  # Adds a button to control the map layers
 my_map.save("Map1.html")  # Creates the map as a HTML document
