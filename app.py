@@ -1,13 +1,18 @@
 import folium
 import pandas
 
-data = pandas.read_csv("data/Volcanoes.txt")
-lat = list(data["LAT"])
-lon = list(data["LON"])
-elev = list(data["ELEV"])
+data = pandas.read_csv("data/Volcanoes.txt")  # Geo data of volcanoes
+lat = list(data["LAT"])  # List of latitudes
+lon = list(data["LON"])  # List of longitudes
+elev = list(data["ELEV"])  # List of elevations (height of the volcano)
 
 
 def color_producer(elevation):
+    """
+        Takes an integer as an input and returns a string representing a color.
+        :param elevation: An integer
+        :return: One of the three strings for the color 'red', 'green' & 'orange'
+    """
     if elevation < 1000:
         return 'green'
     elif 1000 <= elevation < 3000:
@@ -16,13 +21,19 @@ def color_producer(elevation):
         return 'red'
 
 
-my_map = folium.Map(location=[38.58, -99.09], zoom_start=5, tiles="openstreetmap")
-fgv = folium.FeatureGroup(name="Volcanoes")
+my_map = folium.Map(location=[38.58, -99.09], zoom_start=5, tiles="openstreetmap")  # Folium map object
+feature_group_volcanoes = folium.FeatureGroup(name="Volcanoes")  # New feature group object for volcanoes
+
+"""
+Iterates thru the list of latitude, longitude and elevation for each volcano and adds a circle marker for it in 
+feature_group_volcanoes
+"""
 for lt, ln, el in zip(lat, lon, elev):
-    fgv.add_child(folium.CircleMarker(location=[lt, ln], radius=6, popup=str(el) + ' m', fill_color=color_producer(el),
-                                      fill=True, color='grey', fill_opacity=0.7))
+    feature_group_volcanoes.add_child(folium.CircleMarker(location=[lt, ln], radius=6, popup=str(el) + ' m',
+                                                          fill_color=color_producer(el), fill=True, color='grey',
+                                                          fill_opacity=10))
 
 
-my_map.add_child(fgv)
-my_map.add_child(folium.LayerControl())
-my_map.save("Map1.html")
+my_map.add_child(feature_group_volcanoes)  # Attaches feature group for volcanoes to the folium map object
+my_map.add_child(folium.LayerControl())  # Adds a button to control the map layers
+my_map.save("Map1.html")  # Creates the map as a HTML document
